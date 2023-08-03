@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\FilmeAPI-NET6.props" />
+</Project>
