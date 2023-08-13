@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FilmeAPI_NET6.Data.DTOS;
+using System.ComponentModel.DataAnnotations;
 
 namespace FilmeAPI_NET6.Models;
 
@@ -14,11 +15,11 @@ public class Filme
     [Required(ErrorMessage ="Genero Obrigatorio")]
     [MaxLength(50,ErrorMessage ="Genero muito grande")]
     public string Genero { get; set; }
-    
-    public string Lancamento { get; set;}
-    
+        
     [Required]
     [Range(70,600, ErrorMessage = "Duração inválida Max:600min Min:70minn")]
     public int Duracao { get; set; }
+
+    public virtual ICollection<Sessao> Sessoes { get; set; }
 
 }

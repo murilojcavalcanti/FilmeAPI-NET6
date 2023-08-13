@@ -11,9 +11,8 @@ public class CreateFilmeDto
     [StringLength(50, ErrorMessage = "Genero muito grande")]
     public string Genero { get; set; }
 
-    public string Lancamento { get; set; }
-
     [Required]
     [Range(70, 600, ErrorMessage = "Duração inválida Max:600min Min:70minn")]
     public int Duracao { get; set; }
+
 }

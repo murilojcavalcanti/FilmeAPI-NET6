@@ -18,6 +18,7 @@ public class FilmeController : ControllerBase
     {
         Context = _Context;
         Mapper = _Mapper;
+
     }
 
     /// <summary>
@@ -28,33 +29,50 @@ public class FilmeController : ControllerBase
     /// <response code="201">Caso inserção seja feita com sucesso</response>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public CreatedAtActionResult AdicionaFilme([FromBody] CreateFilmeDto filmeDto)
+    public IActionResult AdicionaFilme(
+        [FromBody] CreateFilmeDto filmeDto)
     {
         Filme filme = Mapper.Map<Filme>(filmeDto);
         Context.Filmes.Add(filme);
         Context.SaveChanges();
-
-        return CreatedAtAction
-            (
-            nameof(RecuperaFilmePorId), 
-            new { id=filme.Id},
-            filme);
+        return CreatedAtAction(nameof(RecuperaFilmePorId),
+            new { id = filme.Id },
+            filmeDto);
     }
 
+    /// <summary>
+    /// Retorna filmes do banco de dados
+    /// </summary>
+    /// <param name="skip"> inteiro com o objetivo de começar a retornar a partir do numero informado</param>
+    /// <param name="take"> inteiro com o objetivo de retornar no maximo aquela quantidade de objeto</param>
+    /// <returns>IActionResult</returns>
+    /// <response code="200">Caso a requisisção seja feita com sucesso</response>
     [HttpGet]
-    public IEnumerable<ReadFilmeDto> RecuperaFilmes([FromQuery] int skip=0,int take=50)
-    {    //esses reursos fazem com que possamos paginar o findall e assim precisamos não carregar todos os dados
-        return Mapper.Map<List<ReadFilmeDto>>(Context.Filmes.Skip(skip).Take(take));
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public IEnumerable<ReadFilmeDto> RecuperaFilmes([FromQuery] int skip=0,
+        [FromQuery] int take=50,
+        [FromQuery] string? nomeCinema=null)
+    {    
+        if (nomeCinema==null) return Mapper.Map<List<ReadFilmeDto>>(Context.Filmes.Skip(skip).Take(take).ToList());
+        
+        return Mapper.Map<List<ReadFilmeDto>>(Context.Filmes
+            .Skip(skip).Take(take).Where(filme=>filme.Sessoes
+            .Any(sessao=>sessao.Cinema.Nome==nomeCinema)).ToList());
     }
-    
+
+
+    /// <summary>
+    /// Retorna filmes do banco de dados
+    /// </summary>
+    /// <param name="id"> inteiro usado para buscar o objeto com esse indice</param>
+    /// <returns>IActionResult</returns>
+    /// <response code="200">Caso a requisisção seja feita com sucesso</response>
     [HttpGet("{id}")]
     public IActionResult RecuperaFilmePorId(int id)
     {
         Filme filme = Context.Filmes.FirstOrDefault(f=>f.Id==id);
-        if (filme == null)
-        {
-            return NotFound();
-        }
+        if (filme == null) return NotFound();
+        
         var filmeDto = Mapper.Map<ReadFilmeDto>(filme);
 
         return Ok(filmeDto);
@@ -69,6 +87,8 @@ public class FilmeController : ControllerBase
         Context.SaveChanges();
         return NoContent();
     }
+
+
     [HttpPatch("{id}")]
     public IActionResult AtualizarFilmeParcial(int id, JsonPatchDocument<UpdateFilmeDto> patch)
     {
@@ -89,6 +109,7 @@ public class FilmeController : ControllerBase
         Context.SaveChanges();
         return NoContent();
     }
+    
     [HttpDelete("{id}")]
     public IActionResult DeletarFilme(int id)
     {
