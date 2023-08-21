@@ -10,6 +10,9 @@ No projeto existem três entidades que são: Filme, endereco e cinema.
 
 É uma api onde é possível salvar filmes e cinemas, relancionando-os e salvando-os no banco de dados. 
 
+O projeto irá rodar nas portas https:7060 e http: 5206
+
+
 ```bash
 ## Rodar APP no VSCode
 Antes de rodar é preciso ir em appsettings.json e adicionar o seu banco de dados MySQL.
