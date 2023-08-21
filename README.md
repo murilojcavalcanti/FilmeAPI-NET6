@@ -22,13 +22,10 @@ Para rodar o projeto use o terminal e rode o seguinte comando:
  
 $ dotnet watch run
 
-
-
 ##Rodar APP no Visual Studio
-
 Para rodar o projeto aperte as tecals:
 
 ``` bash
 #Rodar Projeto 
 Crtl + F5
-
+O porjeto irá rodar nas portas https:7060 e http: 5206
